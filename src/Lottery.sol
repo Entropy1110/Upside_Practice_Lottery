@@ -19,8 +19,8 @@ contract Lottery{
         winningNumber = INVALID;
     }
 
-    function buy(uint16 _num) external payable{
-        if (remain == 0 && winningNumber != INVALID){
+    function buy(uint16 _num) external payable {
+        if (winningNumber != INVALID){
             initialize();
         }
         require(due > block.timestamp, "NotBuyable");
@@ -46,7 +46,7 @@ contract Lottery{
         require(winningNumber == INVALID);
         
         
-        winningNumber = uint16(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, block.number))));       
+        winningNumber = uint16(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, block.number)))) % INVALID;       
 
         for (uint i = 0; i < participants.length; i++)
         {
@@ -74,6 +74,7 @@ contract Lottery{
             }
         }
         (bool success, ) = payable(msg.sender).call{value: total}("");
+        require(success, "claim failed");
         
     }
 
@@ -89,7 +90,4 @@ contract Lottery{
         winningNumber = INVALID;
     }
 
-    fallback() external payable{
-        prize += msg.value;
-    }
 }
