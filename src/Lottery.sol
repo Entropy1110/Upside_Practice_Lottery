@@ -45,8 +45,8 @@ contract Lottery{
         require(due <= block.timestamp, "NotYetDrawable");
         require(winningNumber == INVALID);
         
-        //TODO winningNumber to random
-        winningNumber = 0;       
+        
+        winningNumber = uint16(uint256(keccak256(abi.encodePacked(block.timestamp, block.prevrandao, block.number))));       
 
         for (uint i = 0; i < participants.length; i++)
         {
